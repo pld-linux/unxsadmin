@@ -1,0 +1,11 @@
+diff -ur unxsadmin-1.4/makefile unxsadmin-1.4.new/makefile
+--- unxsadmin-1.4/makefile	2009-05-14 17:06:22.000000000 +0200
++++ unxsadmin-1.4.new/makefile	2009-06-12 14:43:26.319577195 +0200
+@@ -13,5 +13,5 @@
+ 	rm -f *.o lastmonth
+ 
+ install: lastmonth
+-	install -s lastmonth /usr/bin/lastmonth
++	install -s lastmonth $(DESTDIR)/usr/bin/lastmonth
+ 	rm lastmonth
+Tylko w unxsadmin-1.4.new/: makefile~
