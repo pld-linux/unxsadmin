@@ -10,9 +10,16 @@ Source1:	%{name}.conf
 URL:		http://openisp.net/unxsAdmin/
 BuildRequires:	rpmbuild(macros) >= 1.268
 Patch0:		%{name}-DESTDIR.patch
+Requires(triggerpostun):	sed >= 4.0
 Requires:	apache >= 2.2
-Requires:	apache-mod_ssl
+Requires:	apache-mod_ssl >= 2.2
+Requires:	apache-mod_dir >= 2.2
 Requires:	rrdtool
+Requires:	webapps
+
+%define		_webapps	/etc/webapps
+%define		_webapp		%{name}
+%define		_sysconfdir	%{_webapps}/%{_webapp}
 
 %description
 unxsadmin provides the http shared content and conf for all unxsVZ web
@@ -44,7 +51,13 @@ install -d $RPM_BUILD_ROOT%{_datadir}/unxs/{cgi-bin,logs,html/{images,js,css}}
 cp -a images/*.gif $RPM_BUILD_ROOT%{_datadir}/unxs/html/images/
 cp -a js/*.js $RPM_BUILD_ROOT%{_datadir}/unxs/html/js
 cp -a css/*.css $RPM_BUILD_ROOT%{_datadir}/unxs/html/css
-install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d/99_unxs.conf
+install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/httpd.conf
+
+%triggerin -- apache < 2.2.0, apache-base
+%webapp_register httpd %{_webapp}
+
+%triggerun -- apache < 2.2.0, apache-base
+%webapp_unregister httpd %{_webapp}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -60,6 +73,8 @@ fi
 %files
 %defattr(644,root,root,755)
 %doc README
+%dir %attr(750,root,http) %{_sysconfdir}
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/httpd.conf
 %dir %{_datadir}/unxs
 %dir %{_datadir}/unxs/cgi-bin
 %dir %{_datadir}/unxs/logs
@@ -70,5 +85,4 @@ fi
 %{_datadir}/unxs/html/images/*.gif
 %dir %{_datadir}/unxs/html/js
 %{_datadir}/unxs/html/js/*.js
-%{_sysconfdir}/httpd/conf.d/99_unxs.conf
 %attr(755,root,root) %{_bindir}/lastmonth
