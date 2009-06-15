@@ -6,11 +6,12 @@ License:	GPL
 Group:		Networking/Admin
 Source0:	http://unixservice.com/source/%{name}-%{version}.tar.gz
 # Source0-md5:	fdffbedd992dbac31c8b6a3a6932ee4d
-URL:		http://openisp.net/openisp/unxsAdmin
+Source1:	%{name}.conf
+URL:		http://openisp.net/unxsAdmin/
 BuildRequires:	rpmbuild(macros) >= 1.268
 Patch0:		%{name}-DESTDIR.patch
-Requires:	httpd
-Requires:	mod_ssl
+Requires:	apache >= 2.2
+Requires:	apache-mod_ssl
 Requires:	rrdtool
 
 %description
@@ -43,7 +44,7 @@ install -d $RPM_BUILD_ROOT%{_datadir}/unxs/{cgi-bin,logs,html/{images,js,css}}
 cp -a images/*.gif $RPM_BUILD_ROOT%{_datadir}/unxs/html/images/
 cp -a js/*.js $RPM_BUILD_ROOT%{_datadir}/unxs/html/js
 cp -a css/*.css $RPM_BUILD_ROOT%{_datadir}/unxs/html/css
-cp unxs.conf $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d/99_unxs.conf
+install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d/99_unxs.conf
 
 %clean
 rm -rf $RPM_BUILD_ROOT
