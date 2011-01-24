@@ -7,15 +7,16 @@ Group:		Networking/Admin
 Source0:	http://unixservice.com/source/%{name}-%{version}.tar.gz
 # Source0-md5:	fdffbedd992dbac31c8b6a3a6932ee4d
 Source1:	%{name}.conf
+Patch0:		%{name}-DESTDIR.patch
 URL:		http://openisp.net/unxsAdmin/
 BuildRequires:	rpmbuild(macros) >= 1.268
-Patch0:		%{name}-DESTDIR.patch
 Requires(triggerpostun):	sed >= 4.0
 Requires:	apache >= 2.2
-Requires:	apache-mod_ssl >= 2.2
 Requires:	apache-mod_dir >= 2.2
+Requires:	apache-mod_ssl >= 2.2
 Requires:	rrdtool
 Requires:	webapps
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_webapps	/etc/webapps
 %define		_webapp		%{name}
@@ -34,16 +35,14 @@ lastmonth.
 %patch0 -p1
 
 %build
-%{__make}
+%{__cc} %{rpmcppflags} %{rpmcflags} %{rpmldflags} lastmonth.c -o lastmonth
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
 install -d $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT%{_bindir}
-
-%{__make} install \
-	DESTDIR=$RPM_BUILD_ROOT
+install lastmonth $RPM_BUILD_ROOT%{_bindir}
 
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d
 install -d $RPM_BUILD_ROOT%{_datadir}/unxs/{cgi-bin,logs,html/{images,js,css}}
