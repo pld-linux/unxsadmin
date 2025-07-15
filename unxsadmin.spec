@@ -32,7 +32,7 @@ lastmonth.
 
 %prep
 %setup -q
-%patch0 -p1
+%patch -P0 -p1
 
 %build
 %{__cc} %{rpmcppflags} %{rpmcflags} %{rpmldflags} lastmonth.c -o lastmonth
